@@ -23,8 +23,25 @@ class CashCardController {
 
     @GetMapping("/{requestedId}")
     public ResponseEntity<CashCard> findById(@PathVariable Long requestedId, Principal principal) {
-        Optional<CashCard> cashCardOptional = Optional.ofNullable(cashCardRepository.findByIdAndOwner(requestedId, principal.getName()));
+        Optional<CashCard> cashCardOptional = findCashCard(requestedId, principal);
         return cashCardOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{requestedId}")
+    public ResponseEntity<Void> putCashCard(@PathVariable Long requestedId,
+                                            @RequestBody CashCard cashCardUpdate,
+                                            Principal principal) {
+        Optional<CashCard> cashCardOptional = findCashCard(requestedId, principal);
+        if (cashCardOptional.isPresent()) {
+            CashCard updatedCashCard = new CashCard(cashCardOptional.get().id(), cashCardUpdate.amount(), principal.getName());
+            cashCardRepository.save(updatedCashCard);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    private Optional<CashCard> findCashCard(Long requestedId, Principal principal) {
+        return Optional.ofNullable(cashCardRepository.findByIdAndOwner(requestedId, principal.getName()));
     }
 
     @PostMapping
