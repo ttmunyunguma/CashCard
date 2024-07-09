@@ -1,0 +1,6 @@
+models:
+  CashCard:
+    fake:
+      _count: 20
+      amount: { float: [0, 1000] }
+      owner: name
