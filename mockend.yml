@@ -2,5 +2,5 @@ models:
   CashCard:
     fake:
       _count: 20
-      amount: { price: [0, 1000] }
+      amount: price
       owner: name
